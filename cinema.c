@@ -223,7 +223,7 @@ void menu() {
         printf("4. Excluir filme\n");
         printf("5. Buscar filmes por genero\n");
         printf("6. Exibir detalhes do filme\n");
-        printf("7. Mostrar estatísticas dos filmes\n");
+        printf("7. Mostrar estatisticas dos filmes\n");
         printf("0. Sair\n");
 
         int escolha;
