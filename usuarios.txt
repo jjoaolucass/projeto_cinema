@@ -1,0 +1,18 @@
+Usuários:
+1 Alice - alice@mail.com
+2 Bob - bob@mail.com
+3 Charlie - charlie@mail.com
+4 Diana - diana@mail.com
+5 Eve - eve@mail.com
+6 Ana - ana@gmail.com
+7 Joao - joao@gmail.com
+8 Lucas - lucas@gmail.com
+9 Eduardo - eduardo@gmail.com
+10 Davi - davi@gmail.com
+
+Filmes:
+1 Inception (Gênero: Sci-Fi, Ano: 2010, Faixa etária: 12+)
+2 The Matrix (Gênero: Action, Ano: 1999, Faixa etária: 16+)
+3 Interstellar (Gênero: Sci-Fi, Ano: 2014, Faixa etária: 12+)
+4 The Godfather (Gênero: Crime, Ano: 1972, Faixa etária: 18+)
+5 The Dark Knight (Gênero: Action, Ano: 2008, Faixa etária: 14+)
