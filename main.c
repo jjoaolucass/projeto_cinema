@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "cinema.h"
 
+
 int main() {
     Usuario novoUsuario;
 

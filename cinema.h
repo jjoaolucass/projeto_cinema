@@ -1,10 +1,14 @@
 #ifndef CINEMA_H
 #define CINEMA_H
 
+#include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
-#define MAX_FILMES 5
-#define MAX_USUARIOS 10
+
+#define MAX_FILMES 100
+#define MAX_USUARIOS 100
 
 typedef struct filme Filme;
 
@@ -22,7 +26,7 @@ int buscaBinaria(Filme filmes[], int inicio, int fim, const char *nome);
 void merge(Filme filmes[], int l, int m, int r);
 void mergeSort(Filme filmes[], int l, int r);
 bool verificarEmail(const char *email);             
-void cadastrarUsuario(Usuario *usuario);           
+void cadastrarUsuario(Usuario *usuario);       
 void salvarUsuarioEmArquivo(Usuario *usuario);       
 void carregarUsuariosDeArquivo();                   
 bool login();                                 
@@ -39,4 +43,4 @@ void carregarUsuarios();
 void salvarFilmes();                              
 void carregarFilmes();                               
 
-#endif
+#endif #CINEMA_H

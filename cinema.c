@@ -4,6 +4,9 @@
 #include <stdlib.h>
 #include "cinema.h"
 
+#define MAX_FILMES 100
+#define MAX_USUARIOS 100
+
 Filme filmes[MAX_FILMES];
 int numFilmes = 0;
 
@@ -27,13 +30,17 @@ bool verificarEmail(const char *email) {
 void cadastrarUsuario(Usuario *usuario) {
     char email[80];
     printf("Digite seu nome de usuario: ");
-    scanf(" %[^\n]", usuario->nome);
-    printf("Digite sua senha: ");
-    scanf(" %s", usuario->senha);
+    fgets(usuario->nome, sizeof(usuario->nome), stdin);
+    strtok(usuario->nome, "\n");  // Remove newline
     
+    printf("Digite sua senha: ");
+    fgets(usuario->senha, sizeof(usuario->senha), stdin);
+    strtok(usuario->senha, "\n");
+
     while (true) {
         printf("Digite seu e-mail: ");
-        scanf(" %79[^\n]", email);
+        fgets(email, sizeof(email), stdin);
+        strtok(email, "\n");
         
         if (verificarEmail(email)) {
             strcpy(usuario->email, email);
@@ -45,13 +52,14 @@ void cadastrarUsuario(Usuario *usuario) {
 
     printf("Digite sua idade: ");
     scanf("%d", &usuario->idade);
+    getchar();  // Consome o newline após o scanf
 
     usuarios[numUsuarios++] = *usuario;
     printf("Cadastro realizado com sucesso!\n");
 }
 
 void salvarUsuarioEmArquivo(Usuario *usuario) {
-    FILE *arquivo = fopen("usuarios.txt", "ab");
+    FILE *arquivo = fopen("usuarios.txt", "a");
     if (arquivo == NULL) {
         perror("Erro ao abrir o arquivo");
         return;
@@ -62,7 +70,7 @@ void salvarUsuarioEmArquivo(Usuario *usuario) {
 }
 
 void carregarUsuariosDeArquivo() {
-    FILE *arquivo = fopen("usuarios.txt", "rb");
+    FILE *arquivo = fopen("usuarios.txt", "r");
     if (arquivo == NULL) {
         perror("Erro ao abrir o arquivo");
         return;
@@ -154,9 +162,11 @@ bool login() {
 
     while (true) {
         printf("Digite seu nome de usuario: ");
-        scanf(" %[^\n]", nome);
+        fgets(nome, sizeof(nome), stdin);
+        strtok(nome, "\n");
         printf("Digite sua senha: ");
-        scanf(" %s", senha);
+        fgets(senha, sizeof(senha), stdin);
+        strtok(senha, "\n");
 
         for (int i = 0; i < numUsuarios; i++) {
             if (strcmp(nome, usuarios[i].nome) == 0 && strcmp(senha, usuarios[i].senha) == 0) {
@@ -181,13 +191,20 @@ void cadastrarFilme() {
 
     Filme *filme = &filmes[numFilmes];
     printf("Digite o nome do filme: ");
-    scanf(" %[^\n]", filme->nome);
+    fgets(filme->nome, sizeof(filme->nome), stdin);
+    strtok(filme->nome, "\n");
+
     printf("Digite o genero do filme: ");
-    scanf(" %[^\n]", filme->genero);
+    fgets(filme->genero, sizeof(filme->genero), stdin);
+    strtok(filme->genero, "\n");
+
     printf("Digite o ano de lancamento: ");
     scanf("%d", &filme->ano);
+    getchar();
+
     printf("Digite a faixa etaria do filme: ");
     scanf("%d", &filme->faixaEtaria);
+    getchar();
 
     numFilmes++;
     printf("Filme '%s' cadastrado com sucesso!\n", filme->nome);
@@ -210,6 +227,7 @@ void editarFilme() {
     printf("Escolha o numero do filme para editar: ");
     scanf("%d", &escolha);
     escolha--;
+    getchar();  // Consome newline
 
     if (escolha < 0 || escolha >= numFilmes) {
         printf("Filme nao encontrado.\n");
@@ -217,33 +235,40 @@ void editarFilme() {
     }
 
     Filme *filme = &filmes[escolha];
+
     printf("Digite o novo nome do filme (ou pressione Enter para manter '%s'): ", filme->nome);
     char novoNome[100];
-    scanf(" %[^\n]", novoNome);
+    fgets(novoNome, sizeof(novoNome), stdin);
+    strtok(novoNome, "\n");
     if (strlen(novoNome) > 0) {
         strcpy(filme->nome, novoNome);
     }
 
     printf("Digite o novo genero do filme (ou pressione Enter para manter '%s'): ", filme->genero);
     char novoGenero[50];
-    scanf(" %[^\n]", novoGenero);
+    fgets(novoGenero, sizeof(novoGenero), stdin);
+    strtok(novoGenero, "\n");
     if (strlen(novoGenero) > 0) {
         strcpy(filme->genero, novoGenero);
     }
 
     printf("Digite o novo ano de lancamento (ou pressione Enter para manter %d): ", filme->ano);
-    int novoAno;
-    if (scanf("%d", &novoAno) == 1) {
+    char novoAnoStr[10];
+    fgets(novoAnoStr, sizeof(novoAnoStr), stdin);
+    if (strlen(novoAnoStr) > 1) {
+        int novoAno = atoi(novoAnoStr);
         filme->ano = novoAno;
     }
-    
+
     printf("Digite a nova faixa etaria (ou pressione Enter para manter %d): ", filme->faixaEtaria);
-    int novaFaixaEtaria;
-    if (scanf("%d", &novaFaixaEtaria) == 1) {
+    char novaFaixaEtariaStr[10];
+    fgets(novaFaixaEtariaStr, sizeof(novaFaixaEtariaStr), stdin);
+    if (strlen(novaFaixaEtariaStr) > 1) {
+        int novaFaixaEtaria = atoi(novaFaixaEtariaStr);
         filme->faixaEtaria = novaFaixaEtaria;
     }
 
-    printf("Filme editado com sucesso!\n");
+    printf("Filme atualizado com sucesso!\n");
 }
 
 void excluirFilme() {
@@ -252,6 +277,7 @@ void excluirFilme() {
     printf("Escolha o numero do filme para excluir: ");
     scanf("%d", &escolha);
     escolha--;
+    getchar();  // Consome newline
 
     if (escolha < 0 || escolha >= numFilmes) {
         printf("Filme nao encontrado.\n");
@@ -266,117 +292,59 @@ void excluirFilme() {
     printf("Filme excluido com sucesso!\n");
 }
 
-void buscarFilmesPorGenero() {
-    char genero[50];
-    printf("Digite o genero para busca: ");
-    scanf(" %[^\n]", genero);
-
-    bool encontrado = false;
-    for (int i = 0; i < numFilmes; i++) {
-        if (strcmp(filmes[i].genero, genero) == 0) {
-            printf("Nome: %s, Ano: %d, Faixa etaria: %d\n", filmes[i].nome, filmes[i].ano, filmes[i].faixaEtaria);
-            encontrado = true;
-        }
-    }
-
-    if (!encontrado) {
-        printf("Nenhum filme encontrado para o genero '%s'.\n", genero);
-    }
-}
-
 void exibirDetalhesFilme() {
     char nome[100];
-    printf("Digite o nome do filme para exibir detalhes: ");
-    scanf(" %[^\n]", nome);
+    printf("Digite o nome do filme: ");
+    fgets(nome, sizeof(nome), stdin);
+    strtok(nome, "\n");
 
-    int index = buscaBinaria(filmes, 0, numFilmes - 1, nome);
-    if (index != -1) {
-        Filme *filme = &filmes[index];
-        printf("Nome: %s\nGenero: %s\nAno: %d\nFaixa etaria: %d\n", filme->nome, filme->genero, filme->ano, filme->faixaEtaria);
-    } else {
+    mergeSort(filmes, 0, numFilmes - 1);  // Garantindo que a lista esteja ordenada
+
+    int indice = buscaBinaria(filmes, 0, numFilmes - 1, nome);
+    if (indice == -1) {
         printf("Filme nao encontrado.\n");
+    } else {
+        Filme *filme = &filmes[indice];
+        printf("Nome: %s, Genero: %s, Ano: %d, Faixa etaria: %d\n", filme->nome, filme->genero, filme->ano, filme->faixaEtaria);
     }
 }
 
-void menu() {
-    int opcao;
-    do {
-        printf("\nMenu:\n");
-        printf("1. Cadastrar Filme\n");
-        printf("2. Listar Filmes\n");
-        printf("3. Editar Filme\n");
-        printf("4. Excluir Filme\n");
-        printf("5. Buscar Filmes por Gênero\n");
-        printf("6. Exibir Detalhes de um Filme\n");
-        printf("7. Sair\n");
-        printf("Escolha uma opção: ");
-        scanf("%d", &opcao);
+int main() {
+    carregarUsuariosDeArquivo();
 
-        switch (opcao) {
-            case 1:
-                cadastrarFilme();
-                break;
-            case 2:
-                listarFilmes();
-                break;
-            case 3:
-                editarFilme();
-                break;
-            case 4:
-                excluirFilme();
-                break;
-            case 5:
-                buscarFilmesPorGenero();
-                break;
-            case 6:
-                exibirDetalhesFilme();
-                break;
-            case 7:
-                printf("Saindo...\n");
-                break;
-            default:
-                printf("Opção inválida. Tente novamente.\n");
-                break;
+    if (login()) {
+        mensagemBoasVindas(&usuarioAtual);
+
+        while (true) {
+            int opcao;
+            printf("\nMenu:\n1. Cadastrar Filme\n2. Listar Filmes\n3. Editar Filme\n4. Excluir Filme\n5. Exibir Detalhes de um Filme\n6. Sair\nEscolha uma opcao: ");
+            scanf("%d", &opcao);
+            getchar();  // Consome newline
+
+            switch (opcao) {
+                case 1:
+                    cadastrarFilme();
+                    break;
+                case 2:
+                    listarFilmes();
+                    break;
+                case 3:
+                    editarFilme();
+                    break;
+                case 4:
+                    excluirFilme();
+                    break;
+                case 5:
+                    exibirDetalhesFilme();
+                    break;
+                case 6:
+                    printf("Saindo...\n");
+                    return 0;
+                default:
+                    printf("Opcao invalida.\n");
+            }
         }
-    } while (opcao != 7);
-}
-
-void salvarUsuarios() {
-    FILE *arquivo = fopen("usuarios.txt", "wb");
-    if (arquivo == NULL) {
-        perror("Erro ao abrir o arquivo");
-        return;
     }
-    fwrite(usuarios, sizeof(Usuario), numUsuarios, arquivo);
-    fclose(arquivo);
-}
 
-void carregarUsuarios() {
-    FILE *arquivo = fopen("usuarios.txt", "rb");
-    if (arquivo == NULL) {
-        perror("Erro ao abrir o arquivo");
-        return;
-    }
-    numUsuarios = fread(usuarios, sizeof(Usuario), MAX_USUARIOS, arquivo);
-    fclose(arquivo);
-}
-
-void salvarFilmes() {
-    FILE *arquivo = fopen("filmes.txt", "wb");
-    if (arquivo == NULL) {
-        perror("Erro ao abrir o arquivo");
-        return;
-    }
-    fwrite(filmes, sizeof(Filme), numFilmes, arquivo);
-    fclose(arquivo);
-}
-
-void carregarFilmes() {
-    FILE *arquivo = fopen("filmes.txt", "rb");
-    if (arquivo == NULL) {
-        perror("Erro ao abrir o arquivo");
-        return;
-    }
-    numFilmes = fread(filmes, sizeof(Filme), MAX_FILMES, arquivo);
-    fclose(arquivo);
+    return 0;
 }
